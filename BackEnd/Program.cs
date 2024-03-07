@@ -1,3 +1,4 @@
+using BackEnd.Data;
 using BackEnd.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,10 @@ builder.Services.AddSqlite<BackEnd.Data.ApplicationDbContext>(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,5 +32,8 @@ app.UseHttpsRedirection();
 app.MapSpeakerEndpoints();
 app.MapAttendeeEndpoints();
 app.MapSessionEndpoints();
+app.MapSearchEndpoints();
+
+app.MapHealthChecks("/health");
 
 app.Run();

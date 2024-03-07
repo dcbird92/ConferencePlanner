@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FrontEnd.Areas.Identity;
 using FrontEnd;
+using FrontEnd.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("IdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbContextConnection' not found.");
@@ -35,6 +36,10 @@ builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
 
 builder.Services.AddSingleton<IAdminService, AdminService>();
 
+builder.Services.AddHealthChecks()
+    .AddCheck<BackendHealthCheck>("backend")
+    .AddDbContextCheck<IdentityDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,5 +61,7 @@ app.UseAuthorization();
 app.UseMiddleware<RequireLoginMiddleware>();
 
 app.MapRazorPages();
+
+app.MapHealthChecks("/health");
 
 app.Run();
