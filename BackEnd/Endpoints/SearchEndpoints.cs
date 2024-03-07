@@ -7,7 +7,7 @@ namespace BackEnd.Endpoints
 {
     public static class SearchEndpoints
     {
-        public static void MapSearchResults(this IEndpointRouteBuilder routes)
+        public static void MapSearchEndpoints(this IEndpointRouteBuilder routes)
         {
             routes.MapGet("/api/Search/{term}", async (string term, ApplicationDbContext db) =>
             {
@@ -45,7 +45,7 @@ namespace BackEnd.Endpoints
                         ? Results.Ok(model)
                         : Results.NotFound();
             })
-            .WithTags("Seach")
+            .WithTags("Search")
             .WithName("GetSearchResults")
             .Produces<IEnumerable<SearchResult>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);

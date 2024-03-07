@@ -89,5 +89,38 @@ namespace FrontEnd.Services
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<SearchResult>>() ?? new();
         }
+
+        public async Task<List<SessionResponse>> GetSessionsByAttendeeAsync(string name)
+        {
+            var response = await _httpClient.GetAsync($"/api/Attendee/{name}/Sessions");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<SessionResponse>>() ?? new();
+        }
+
+        public async Task AddSessionToAttendeeAsync(string name, int sessionId)
+        {
+            var response = await _httpClient.PostAsync($"$/api/Attendee/{name}/Session/{sessionId}", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task RemoveSessionFromAttendeeAsync(string name, int sessionId)
+        {
+            var response = await _httpClient.DeleteAsync($"/api/Attendee/{name}/Session/{sessionId}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<bool> CheckHealthAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetStringAsync("/health");
+
+                return string.Equals(response, "Healthy", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
